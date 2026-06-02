@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Academy Generator</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin:auto;
+            padding:20px;
+        }
+
+        select,button{
+            padding:10px;
+            font-size:16px;
+        }
+
+        pre{
+            background:#f5f5f5;
+            padding:20px;
+            white-space:pre-wrap;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>Academy Quiz Generator</h1>
+
+<form method="POST">
+
+<select name="unit">
+
+<option value="1A">UNIT 1A</option>
+<option value="1B">UNIT 1B</option>
+<option value="1C">UNIT 1C</option>
+<option value="1D">UNIT 1D</option>
+
+</select>
+
+<button type="submit">
+Generate Quiz
+</button>
+
+</form>
+
+<hr>
+
+<pre>{{ result }}</pre>
+
+</body>
+</html>
