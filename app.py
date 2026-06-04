@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from dotenv import load_dotenv
 import os
@@ -15,6 +15,9 @@ if not api_key:
 client = Groq(api_key=api_key)
 
 app = Flask(__name__)
+
+# Cola temporal de quizzes pendientes
+QUIZ_QUEUE = []
 
 UNITS = {
 
@@ -150,6 +153,50 @@ No explanations.
         "index.html",
         result=result
     )
+
+
+# ============================
+# API PARA WORDPRESS
+# ============================
+
+@app.route("/save_quiz", methods=["POST"])
+def save_quiz():
+
+    data = request.get_json()
+
+    QUIZ_QUEUE.append(data)
+
+    return jsonify({
+        "success": True,
+        "pending": len(QUIZ_QUEUE)
+    })
+
+
+@app.route("/quizzes_pending", methods=["GET"])
+def quizzes_pending():
+
+    return jsonify({
+        "count": len(QUIZ_QUEUE),
+        "quizzes": QUIZ_QUEUE
+    })
+
+
+@app.route("/clear_quizzes", methods=["POST"])
+def clear_quizzes():
+
+    QUIZ_QUEUE.clear()
+
+    return jsonify({
+        "success": True
+    })
+
+
+@app.route("/health", methods=["GET"])
+def health():
+
+    return jsonify({
+        "status": "ok"
+    })
 
 
 if __name__ == "__main__":
