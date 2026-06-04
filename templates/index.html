@@ -7,7 +7,7 @@
 
         body{
             font-family: Arial, sans-serif;
-            max-width: 1000px;
+            max-width:1000px;
             margin:auto;
             padding:20px;
         }
@@ -15,16 +15,22 @@
         select,button{
             padding:10px;
             font-size:16px;
+            margin-right:10px;
         }
 
         pre{
             background:#f5f5f5;
             padding:20px;
             white-space:pre-wrap;
+            border-radius:8px;
+        }
+
+        #saveResult{
+            margin-top:15px;
+            font-weight:bold;
         }
 
     </style>
-
 </head>
 
 <body>
@@ -33,24 +39,62 @@
 
 <form method="POST">
 
-<select name="unit">
+    <select name="unit">
+        <option value="1A">UNIT 1A</option>
+        <option value="1B">UNIT 1B</option>
+        <option value="1C">UNIT 1C</option>
+        <option value="1D">UNIT 1D</option>
+    </select>
 
-<option value="1A">UNIT 1A</option>
-<option value="1B">UNIT 1B</option>
-<option value="1C">UNIT 1C</option>
-<option value="1D">UNIT 1D</option>
-
-</select>
-
-<button type="submit">
-Generate Quiz
-</button>
+    <button type="submit">
+        Generate Quiz
+    </button>
 
 </form>
 
 <hr>
 
-<pre>{{ result }}</pre>
+<pre id="quizContent">{{ result }}</pre>
+
+{% if result %}
+
+<button id="saveQuizBtn">
+    Save Quiz To Queue
+</button>
+
+<div id="saveResult"></div>
+
+<script>
+
+document.getElementById("saveQuizBtn").addEventListener("click", async () => {
+
+    const quizText =
+        document.getElementById("quizContent").innerText;
+
+    const response = await fetch("/save_quiz", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            title: "Generated Quiz",
+            content: quizText
+        })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("saveResult").innerHTML =
+        "✅ Quiz guardado. Pendientes: " + data.pending;
+
+});
+
+</script>
+
+{% endif %}
 
 </body>
 </html>

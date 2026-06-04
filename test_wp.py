@@ -1,11 +1,14 @@
 import requests
 
-url = "http://academiafluent.infinityfree.me/wp-json/wp/v2/users/me"
+url = "https://academiafluent.infinityfree.me/wp-json/wp/v2/users/me"
+
+usuario = "TU_USUARIO"
+password = "TU_APPLICATION_PASSWORD"
 
 r = requests.get(
     url,
-    auth=("TU_USUARIO_WORDPRESS", "TU_PASSWORD_WORDPRESS")
+    auth=(usuario, password)
 )
 
-print(r.status_code)
+print("STATUS:", r.status_code)
 print(r.text)
