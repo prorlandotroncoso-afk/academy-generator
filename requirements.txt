@@ -2,3 +2,6 @@ flask
 groq
 python-dotenv
 gunicorn
+pandas 
+requests 
+PyPDF2
