@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from dotenv import load_dotenv
+from PyPDF2 import PdfReader
+import requests
+import io
 import os
 import pandas as pd
 
@@ -20,6 +23,7 @@ SHEET_URL = "https://docs.google.com/spreadsheets/d/1g6NNANlvTFe5dM9r7jTy1QnGh9a
 
 # Cola temporal de quizzes pendientes
 QUIZ_QUEUE = []
+
 def get_active_subunit():
 
     try:
@@ -47,6 +51,38 @@ def get_active_subunit():
         print("ERROR SHEET:", e)
 
         return None
+
+
+def extract_text_from_drive_pdf(drive_url):
+
+    try:
+
+        file_id = drive_url.split("/d/")[1].split("/")[0]
+
+        download_url = (
+            f"https://drive.google.com/uc?export=download&id={file_id}"
+        )
+
+        response = requests.get(download_url, timeout=30)
+
+        pdf_file = io.BytesIO(response.content)
+
+        reader = PdfReader(pdf_file)
+
+        text = ""
+
+        for page in reader.pages:
+
+            page_text = page.extract_text()
+
+            if page_text:
+                text += page_text + "\n"
+
+        return text
+
+    except Exception as e:
+
+        return f"ERROR PDF: {str(e)}"
 
 UNITS = {
 
@@ -90,7 +126,11 @@ def home():
 
     if active_data:
 
-        result = f"""
+        pdf_text = extract_text_from_drive_pdf(
+        active_data['drive_link']
+    )
+
+    result = f"""
 ACTIVE FOUND
 
 UNIT: {active_data['unit']}
@@ -100,9 +140,9 @@ COURSE_ID: {active_data['course_id']}
 ACTIVITY_ID: {active_data['activity_id']}
 FINAL_QUIZ_ID: {active_data['final_quiz_id']}
 
-DRIVE_LINK:
+========== PDF TEXT ==========
 
-{active_data['drive_link']}
+{pdf_text[:5000]}
 """
 
     if request.method == "POST":
