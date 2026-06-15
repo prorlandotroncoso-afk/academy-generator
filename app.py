@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
+from pdf2image import convert_from_bytes
 import requests
 import io
 import os
@@ -59,30 +60,29 @@ def extract_text_from_drive_pdf(drive_url):
 
         file_id = drive_url.split("/d/")[1].split("/")[0]
 
-        download_url = (
-            f"https://drive.google.com/uc?export=download&id={file_id}"
-        )
+        download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
 
         response = requests.get(download_url, timeout=30)
 
-        pdf_file = io.BytesIO(response.content)
+        pdf_bytes = response.content
 
-        reader = PdfReader(pdf_file)
+        # 🔥 convertir PDF a imágenes
+        images = convert_from_bytes(pdf_bytes)
 
         text = ""
 
-        for page in reader.pages:
+        for img in images:
 
-            page_text = page.extract_text()
+            page_text = pytesseract.image_to_string(img)
 
             if page_text:
                 text += page_text + "\n"
 
-        return text
+        return text.strip()
 
     except Exception as e:
 
-        return f"ERROR PDF: {str(e)}"
+        return f"ERROR OCR: {str(e)}"
 
 UNITS = {
 
