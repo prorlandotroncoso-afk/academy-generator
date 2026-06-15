@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 load_dotenv()
 
@@ -15,9 +16,37 @@ if not api_key:
 client = Groq(api_key=api_key)
 
 app = Flask(__name__)
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1g6NNANlvTFe5dM9r7jTy1QnGh9aKLXKMcNuMJLYMxrY/export?format=csv&gid=0"
 
 # Cola temporal de quizzes pendientes
 QUIZ_QUEUE = []
+def get_active_subunit():
+
+    try:
+
+        df = pd.read_csv(SHEET_URL)
+
+        active = df[df["STATUS"] == "ACTIVE"]
+
+        if active.empty:
+            return None
+
+        row = active.iloc[0]
+
+        return {
+            "unit": str(row["UNIT"]),
+            "subunit": str(row["SUBUNIT"]),
+            "course_id": int(row["COURSE_ID"]),
+            "activity_id": int(row["ACTIVITY_ID"]),
+            "final_quiz_id": int(row["FINAL_QUIZ_ID"]),
+            "drive_link": str(row["DRIVE_LINK"])
+        }
+
+    except Exception as e:
+
+        print("ERROR SHEET:", e)
+
+        return None
 
 UNITS = {
 
@@ -56,6 +85,25 @@ UNITS = {
 def home():
 
     result = ""
+
+    active_data = get_active_subunit()
+
+    if active_data:
+
+        result = f"""
+ACTIVE FOUND
+
+UNIT: {active_data['unit']}
+SUBUNIT: {active_data['subunit']}
+
+COURSE_ID: {active_data['course_id']}
+ACTIVITY_ID: {active_data['activity_id']}
+FINAL_QUIZ_ID: {active_data['final_quiz_id']}
+
+DRIVE_LINK:
+
+{active_data['drive_link']}
+"""
 
     if request.method == "POST":
 
