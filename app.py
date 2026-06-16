@@ -52,6 +52,38 @@ def get_active_subunit():
         return None
 
 
+from paddleocr import PaddleOCR
+from pdf2image import convert_from_bytes
+
+ocr = PaddleOCR(use_angle_cls=True, lang='en')
+
+import io
+import requests
+from pdf2image import convert_from_bytes
+
+OCR_API_KEY = "helloworld"
+
+
+def ocr_space_image(image_bytes):
+
+    response = requests.post(
+        "https://api.ocr.space/parse/image",
+        files={"file": image_bytes},
+        data={
+            "apikey": OCR_API_KEY,
+            "language": "eng"
+        },
+        timeout=60
+    )
+
+    result = response.json()
+
+    if result.get("IsErroredOnProcessing"):
+        return ""
+
+    return result["ParsedResults"][0]["ParsedText"]
+
+
 def extract_text_from_drive_pdf(drive_url):
 
     try:
@@ -60,14 +92,16 @@ def extract_text_from_drive_pdf(drive_url):
 
         response = requests.get(download_url, timeout=30)
 
-        pdf_bytes = response.content
-
-        images = convert_from_bytes(pdf_bytes)
+        images = convert_from_bytes(response.content)
 
         text = ""
 
         for img in images:
-            page_text = pytesseract.image_to_string(img)
+
+            buffer = io.BytesIO()
+            img.save(buffer, format="PNG")
+
+            page_text = ocr_space_image(buffer.getvalue())
 
             if page_text:
                 text += page_text + "\n"
