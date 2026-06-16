@@ -8,6 +8,7 @@ import requests
 import io
 import os
 import pandas as pd
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 load_dotenv()
 
