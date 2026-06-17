@@ -39,41 +39,44 @@
 
 <form method="POST">
 
-    <select name="unit">
-        <option value="1A">UNIT 1A</option>
-        <option value="1B">UNIT 1B</option>
-        <option value="1C">UNIT 1C</option>
-        <option value="1D">UNIT 1D</option>
-    </select>
+    <h2>UNIT 1</h2>
+
+    <label>
+        <input type="checkbox" name="subunits" value="1A">
+        A
+    </label>
+    <br>
+
+    <label>
+        <input type="checkbox" name="subunits" value="1B">
+        B
+    </label>
+    <br>
+
+    <label>
+        <input type="checkbox" name="subunits" value="1C">
+        C
+    </label>
+    <br>
+
+    <label>
+        <input type="checkbox" name="subunits" value="1D">
+        D
+    </label>
+    <br>
+
+    <label>
+        <input type="checkbox" name="subunits" value="1FINAL">
+        FINAL
+    </label>
+
+    <br><br>
 
     <button type="submit">
-        Generate Quiz
+        Generate Selected
     </button>
 
 </form>
-
-<hr>
-
-<pre id="quizContent">{{ result }}</pre>
-
-{% if result %}
-
-<button id="saveQuizBtn">
-    Save Quiz To Queue
-</button>
-
-<div id="saveResult"></div>
-
-<script>
-
-document.getElementById("saveQuizBtn").addEventListener("click", async () => {
-
-    const quizText =
-        document.getElementById("quizContent").innerText;
-
-    const response = await fetch("/save_quiz", {
-
-        method: "POST",
 
         headers: {
             "Content-Type": "application/json"
