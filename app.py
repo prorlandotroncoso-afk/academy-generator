@@ -149,38 +149,35 @@ def get_active_subunit():
 def home():
 
     result = ""
+    selected_subunits = []
 
     active_data = get_active_subunit()
-
     print(active_data)
 
     if request.method == "POST":
 
-       unit = request.form["unit"]
+        unit = request.form["unit"]
+        selected_subunits = request.form.getlist("subunits")
 
-       selected_subunits = request.form.getlist("subunits")
+        df = pd.read_csv(SHEET_URL)
 
-       df = pd.read_csv(SHEET_URL)
+        for subunit in selected_subunits:
 
-       result = ""
+            match = df[
+                (df["UNIT"].astype(str) == str(unit))
+                &
+                (df["SUBUNIT"].astype(str) == str(subunit))
+            ]
 
-    for subunit in selected_subunits:
+            if not match.empty:
 
-        match = df[
-            (df["UNIT"].astype(str) == str(unit))
-            &
-            (df["SUBUNIT"].astype(str) == str(subunit))
-        ]
+                row = match.iloc[0]
 
-        if not match.empty:
+                pdf_text = extract_text_from_drive_pdf(
+                    row["DRIVE_LINK"]
+                )
 
-            row = match.iloc[0]
-
-            pdf_text = extract_text_from_drive_pdf(
-                row["DRIVE_LINK"]
-            )
-
-            prompt = f"""
+                prompt = f"""
 You are an expert LearnPress quiz creator.
 
 Create a complete quiz based ONLY on the following lesson.
@@ -199,24 +196,14 @@ RULES:
 6. Return only the quiz.
 """
 
-            response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-            )
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": prompt}]
+                )
 
-            quiz_text = (
-                response
-                .choices[0]
-                .message
-                .content
-            )
+                quiz_text = response.choices[0].message.content
 
-            result += f"""
+                result += f"""
 ====================================
 
 UNIT {row['UNIT']}{row['SUBUNIT']}
@@ -230,6 +217,8 @@ QUIZ GENERATED:
 
 ====================================
 """
+
+    return render_template("index.html", result=result)
 # ============================
 # API PARA WORDPRESS
 # ============================
