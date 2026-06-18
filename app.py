@@ -78,6 +78,17 @@ UNITS = {
     }
 
 }
+def get_active_subunit():
+
+    try:
+
+        df = pd.read_csv(SHEET_URL)
+
+        return df.to_string()
+
+    except Exception as e:
+
+        return f"ERROR SHEET: {str(e)}"
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -95,12 +106,7 @@ def home():
 
         selected_subunits = request.form.getlist("subunits")
 
-        result = f"""
-UNIT SELECTED: {unit}
-
-SUBUNITS:
-{selected_subunits}
-"""
+        result = get_active_subunit()
 
     return render_template(
         "index.html",
