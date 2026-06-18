@@ -106,14 +106,40 @@ def home():
 
         selected_subunits = request.form.getlist("subunits")
 
-        result = get_active_subunit()
+        df = pd.read_csv(SHEET_URL)
+
+        result = ""
+
+        for subunit in selected_subunits:
+
+            match = df[
+                (df["UNIT"].astype(str) == str(unit))
+                &
+                (df["SUBUNIT"].astype(str) == str(subunit))
+            ]
+
+            if not match.empty:
+
+                row = match.iloc[0]
+
+                result += f"""
+UNIT {row['UNIT']}{row['SUBUNIT']}
+
+COURSE_ID: {row['COURSE_ID']}
+ACTIVITY_ID: {row['ACTIVITY_ID']}
+FINAL_QUIZ_ID: {row['FINAL_QUIZ_ID']}
+
+DRIVE_LINK:
+{row['DRIVE_LINK']}
+
+------------------------------------
+
+"""
 
     return render_template(
         "index.html",
         result=result
     )
-
-
 # ============================
 # API PARA WORDPRESS
 # ============================
