@@ -93,93 +93,14 @@ def home():
 
         unit = request.form["unit"]
 
-        data = UNITS[unit]
+        selected_subunits = request.form.getlist("subunits")
 
-        prompt = f"""
-You are an expert LearnPress quiz creator.
+        result = f"""
+UNIT SELECTED: {unit}
 
-Generate a quiz for UNIT {unit}.
-
-Grammar:
-{data['grammar']}
-
-Vocabulary:
-{data['vocabulary']}
-
-Pronunciation:
-{data['pronunciation']}
-
-Speaking:
-{data['speaking']}
-
-IMPORTANT RULES:
-
-1. Generate EXACTLY 20 questions.
-
-2. Distribution:
-- Grammar: 8 questions
-- Vocabulary: 6 questions
-- Usage/Speaking: 4 questions
-- Pronunciation: 2 questions
-
-3. Use ONLY these question types:
-- Multiple Choice
-- Fill in the Blank
-- True/False
-- Matching
-- Sentence Order
-
-4. DO NOT create:
-- Open speaking questions
-- Subjective questions
-- Questions requiring teacher correction
-- Free writing tasks
-
-5. Every question MUST be automatically gradable.
-
-6. Use a balanced mix of question types.
-
-7. Follow this output format exactly:
-
-QUESTION TYPE:
-CATEGORY:
-QUESTION:
-OPTIONS:
-CORRECT ANSWER:
-
-Example:
-
-QUESTION TYPE: Multiple Choice
-CATEGORY: Grammar
-QUESTION: He ___ a teacher.
-OPTIONS:
-A) am
-B) is
-C) are
-CORRECT ANSWER: B
-
-Return only the quiz.
-No introduction.
-No explanations.
+SUBUNITS:
+{selected_subunits}
 """
-
-        try:
-
-            response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-            )
-
-            result = response.choices[0].message.content
-
-        except Exception as e:
-
-            result = f"ERROR: {str(e)}"
 
     return render_template(
         "index.html",
