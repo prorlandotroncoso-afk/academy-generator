@@ -20,6 +20,60 @@ app = Flask(__name__)
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1g6NNANlvTFe5dM9r7jTy1QnGh9aKLXKMcNuMJLYMxrY/export?format=csv&gid=0"
 # Cola temporal de quizzes pendientes
 QUIZ_QUEUE = []
+OCR_API_KEY = "helloworld"
+
+def extract_text_from_drive_pdf(drive_url):
+
+    try:
+
+        file_id = drive_url.split("/d/")[1].split("/")[0]
+
+        download_url = (
+            f"https://drive.google.com/uc?export=download&id={file_id}"
+        )
+
+        pdf_response = requests.get(
+            download_url,
+            timeout=60
+        )
+
+        response = requests.post(
+            "https://api.ocr.space/parse/image",
+            files={
+                "file": (
+                    "document.pdf",
+                    pdf_response.content,
+                    "application/pdf"
+                )
+            },
+            data={
+                "apikey": OCR_API_KEY,
+                "language": "eng"
+            },
+            timeout=120
+        )
+
+        result = response.json()
+
+        if result.get("IsErroredOnProcessing"):
+            return "OCR ERROR"
+
+        text = ""
+
+        for page in result.get("ParsedResults", []):
+
+            text += page.get(
+                "ParsedText",
+                ""
+            )
+
+            text += "\n"
+
+        return text
+
+    except Exception as e:
+
+        return f"ERROR OCR: {str(e)}"
 def get_active_subunit():
 
     try:
@@ -121,7 +175,9 @@ def home():
             if not match.empty:
 
                 row = match.iloc[0]
-
+                pdf_text = extract_text_from_drive_pdf(
+                    row["DRIVE_LINK"]
+                )
                 result += f"""
 UNIT {row['UNIT']}{row['SUBUNIT']}
 
@@ -131,6 +187,10 @@ FINAL_QUIZ_ID: {row['FINAL_QUIZ_ID']}
 
 DRIVE_LINK:
 {row['DRIVE_LINK']}
+
+PDF TEXT:
+
+{pdf_text[:3000]}
 
 ------------------------------------
 
