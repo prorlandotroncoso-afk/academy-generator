@@ -156,50 +156,80 @@ def home():
 
     if request.method == "POST":
 
-        unit = request.form["unit"]
+       unit = request.form["unit"]
 
-        selected_subunits = request.form.getlist("subunits")
+       selected_subunits = request.form.getlist("subunits")
 
-        df = pd.read_csv(SHEET_URL)
+       df = pd.read_csv(SHEET_URL)
 
-        result = ""
+       result = ""
 
-        for subunit in selected_subunits:
+    for subunit in selected_subunits:
 
-            match = df[
-                (df["UNIT"].astype(str) == str(unit))
-                &
-                (df["SUBUNIT"].astype(str) == str(subunit))
-            ]
+        match = df[
+            (df["UNIT"].astype(str) == str(unit))
+            &
+            (df["SUBUNIT"].astype(str) == str(subunit))
+        ]
 
-            if not match.empty:
+        if not match.empty:
 
-                row = match.iloc[0]
-                pdf_text = extract_text_from_drive_pdf(
-                    row["DRIVE_LINK"]
-                )
-                result += f"""
-UNIT {row['UNIT']}{row['SUBUNIT']}
+            row = match.iloc[0]
 
-COURSE_ID: {row['COURSE_ID']}
-ACTIVITY_ID: {row['ACTIVITY_ID']}
-FINAL_QUIZ_ID: {row['FINAL_QUIZ_ID']}
+            pdf_text = extract_text_from_drive_pdf(
+                row["DRIVE_LINK"]
+            )
 
-DRIVE_LINK:
-{row['DRIVE_LINK']}
+            prompt = f"""
+You are an expert LearnPress quiz creator.
 
-PDF TEXT:
+Create a complete quiz based ONLY on the following lesson.
 
-{pdf_text[:3000]}
+LESSON CONTENT:
 
-------------------------------------
+{pdf_text}
 
+RULES:
+
+1. Generate 20 questions.
+2. Multiple Choice only.
+3. Include 4 options.
+4. Indicate the correct answer.
+5. Use only information found in the lesson.
+6. Return only the quiz.
 """
 
-    return render_template(
-        "index.html",
-        result=result
-    )
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            quiz_text = (
+                response
+                .choices[0]
+                .message
+                .content
+            )
+
+            result += f"""
+====================================
+
+UNIT {row['UNIT']}{row['SUBUNIT']}
+
+ACTIVITY_ID:
+{row['ACTIVITY_ID']}
+
+QUIZ GENERATED:
+
+{quiz_text}
+
+====================================
+"""
 # ============================
 # API PARA WORDPRESS
 # ============================
