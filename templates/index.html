@@ -12,9 +12,17 @@
             padding:20px;
         }
 
+        select,
         button{
             padding:10px;
             font-size:16px;
+        }
+
+        .box{
+            margin-top:20px;
+            padding:15px;
+            border:1px solid #ccc;
+            border-radius:8px;
         }
 
     </style>
@@ -26,44 +34,81 @@
 
 <form method="POST">
 
-    <h2>UNIT 1</h2>
+    <div class="box">
 
-    <label>
-        <input type="checkbox" name="subunits" value="1A">
-        A
-    </label>
+        <h2>Select Unit</h2>
+
+        <select name="unit">
+
+            <option value="1">UNIT 1</option>
+            <option value="2">UNIT 2</option>
+            <option value="3">UNIT 3</option>
+            <option value="4">UNIT 4</option>
+            <option value="5">UNIT 5</option>
+            <option value="6">UNIT 6</option>
+            <option value="7">UNIT 7</option>
+            <option value="8">UNIT 8</option>
+            <option value="9">UNIT 9</option>
+            <option value="10">UNIT 10</option>
+
+        </select>
+
+    </div>
+
+    <div class="box">
+
+        <h2>Select Subunits</h2>
+
+        <label>
+            <input type="checkbox" name="subunits" value="A">
+            A
+        </label>
+
+        <br>
+
+        <label>
+            <input type="checkbox" name="subunits" value="B">
+            B
+        </label>
+
+        <br>
+
+        <label>
+            <input type="checkbox" name="subunits" value="C">
+            C
+        </label>
+
+        <br>
+
+        <label>
+            <input type="checkbox" name="subunits" value="D">
+            D
+        </label>
+
+        <br>
+
+        <label>
+            <input type="checkbox" name="subunits" value="FINAL">
+            FINAL
+        </label>
+
+    </div>
+
     <br>
-
-    <label>
-        <input type="checkbox" name="subunits" value="1B">
-        B
-    </label>
-    <br>
-
-    <label>
-        <input type="checkbox" name="subunits" value="1C">
-        C
-    </label>
-    <br>
-
-    <label>
-        <input type="checkbox" name="subunits" value="1D">
-        D
-    </label>
-    <br>
-
-    <label>
-        <input type="checkbox" name="subunits" value="1FINAL">
-        FINAL
-    </label>
-
-    <br><br>
 
     <button type="submit">
-        Generate Selected
+        GENERATE SELECTED
     </button>
 
 </form>
+
+{% if result %}
+
+<hr>
+
+<pre>{{ result }}</pre>
+
+{% endif %}
 
 </body>
 </html>
