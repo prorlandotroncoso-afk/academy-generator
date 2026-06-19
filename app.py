@@ -200,9 +200,13 @@ RULES:
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
                 )
-
+                
                 quiz_text = response.choices[0].message.content
-
+                QUIZ_QUEUE.append({
+                    "activity_id": int(row["ACTIVITY_ID"]),
+                    "unit": f"{row['UNIT']}{row['SUBUNIT']}",
+                    "quiz": quiz_text
+                })
                 result += f"""
 ====================================
 
