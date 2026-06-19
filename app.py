@@ -186,7 +186,38 @@ Create a complete quiz based ONLY on the lesson below.
 LESSON CONTENT:
 
 {pdf_text}
+IMPORTANT CONTENT FILTER:
 
+Ignore completely:
+
+lesson objectives
+instructions to students
+classroom activities
+pair work activities
+discussion tasks
+review exercises
+workbook activities
+listening tasks
+speaking tasks
+"work with a partner"
+"discuss"
+"practice"
+"complete the sentences"
+"answer the questions"
+"look at the picture"
+"listen and repeat"
+"what is the goal of the lesson"
+
+Create questions ONLY from:
+
+grammar explanations
+vocabulary content
+reading texts
+dialogues
+examples
+factual lesson information
+
+Never create questions about classroom instructions or activities.
 IMPORTANT RULES:
 
 Generate EXACTLY 20 questions.
@@ -199,7 +230,9 @@ Distribution:
 * 2 Matching
 * 2 Sentence Order
 
-Use ONLY information found in the lesson.
+Use ONLY information found in the lesson content itself.
+
+Do NOT create questions from exercises, activities, instructions, objectives, tasks or pedagogical directions.
 
 Return every question using EXACTLY this structure:
 
