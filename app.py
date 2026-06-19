@@ -394,7 +394,7 @@ def quizzes_pending():
     })
 
 
-@app.route("/clear_quizzes", methods=["POST"])
+@app.route("/clear_quizzes", methods=["POST" "GET"])
 def clear_quizzes():
 
     QUIZ_QUEUE.clear()
