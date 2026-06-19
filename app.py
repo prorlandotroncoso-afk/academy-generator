@@ -172,7 +172,8 @@ def home():
             if not match.empty:
 
                 row = match.iloc[0]
-
+                if str(row["STATUS"]).upper() != "ACTIVE":
+                    continue
                 pdf_text = extract_text_from_drive_pdf(
                     row["DRIVE_LINK"]
                 )
