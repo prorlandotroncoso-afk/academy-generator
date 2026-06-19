@@ -224,11 +224,13 @@ Generate EXACTLY 20 questions.
 
 Distribution:
 
-* 8 Multiple Choice
-* 4 Fill in the Blank
-* 4 True/False
-* 2 Matching
-* 2 Sentence Order
+6 Multiple Choice
+2 Unique Option
+3 True False
+3 Fill Blank
+2 Matching
+2 Sentence Order
+2 Short Form
 
 Use ONLY information found in the lesson content itself.
 
@@ -254,6 +256,23 @@ B
 ---
 
 QUESTION TYPE:
+Unique Option
+
+QUESTION:
+Where is Tom from?
+
+OPTIONS:
+A) Spain
+B) Argentina
+C) Canada
+D) Italy
+
+CORRECT ANSWER:
+B
+
+---
+
+QUESTION TYPE:
 Fill Blank
 
 QUESTION:
@@ -261,6 +280,17 @@ Tom Cruise is ______.
 
 CORRECT ANSWER:
 American
+
+---
+
+QUESTION TYPE:
+Short Form
+
+QUESTION:
+you are
+
+CORRECT ANSWER:
+you're
 
 ---
 
@@ -285,6 +315,10 @@ Nina
 RIGHT:
 American
 Office Worker
+
+CORRECT ANSWER:
+Tom Cruise - American
+Nina - Office Worker
 
 ---
 
