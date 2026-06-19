@@ -180,21 +180,98 @@ def home():
                 prompt = f"""
 You are an expert LearnPress quiz creator.
 
-Create a complete quiz based ONLY on the following lesson.
+Create a complete quiz based ONLY on the lesson below.
 
 LESSON CONTENT:
 
 {pdf_text}
 
-RULES:
+IMPORTANT RULES:
 
-1. Generate 20 questions.
-2. Multiple Choice only.
-3. Include 4 options.
-4. Indicate the correct answer.
-5. Use only information found in the lesson.
-6. Return only the quiz.
+Generate EXACTLY 20 questions.
+
+Distribution:
+
+* 8 Multiple Choice
+* 4 Fill in the Blank
+* 4 True/False
+* 2 Matching
+* 2 Sentence Order
+
+Use ONLY information found in the lesson.
+
+Return every question using EXACTLY this structure:
+
+QUESTION TYPE:
+Multiple Choice
+
+QUESTION:
+Question text
+
+OPTIONS:
+A) ...
+B) ...
+C) ...
+D) ...
+
+CORRECT ANSWER:
+B
+
+---
+
+QUESTION TYPE:
+Fill Blank
+
+QUESTION:
+Tom Cruise is ______.
+
+CORRECT ANSWER:
+American
+
+---
+
+QUESTION TYPE:
+True False
+
+QUESTION:
+Tom Cruise is Canadian.
+
+CORRECT ANSWER:
+False
+
+---
+
+QUESTION TYPE:
+Matching
+
+LEFT:
+Tom Cruise
+Nina
+
+RIGHT:
+American
+Office Worker
+
+---
+
+QUESTION TYPE:
+Sentence Order
+
+WORDS:
+from / is / Tom / America
+
+CORRECT ANSWER:
+Tom is from America
+
+---
+
+Return ONLY the quiz.
+
+Do NOT write explanations.
+Do NOT write introductions.
+Do NOT number the questions.
 """
+
 
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
